@@ -1,0 +1,12 @@
+# params.yaml
+feature_engineering:  
+  columns_to_encode:                  # List of categorical columns that need onehotencoding
+    - bat_team
+    - bowl_team
+
+  columns_to_scale:                   # numerical columns that are to be scaled
+    - overs
+    - runs 
+    - wickets 
+    - runs_last_5 
+    - wickets_last_5

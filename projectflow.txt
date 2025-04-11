@@ -21,4 +21,6 @@
                       d. Best-Model's-tuning     / model_tuning.ipynb) & visualize performance on mlflow-ui(sort by: user)
 13. git add - commit - push
 
-14. dvc init
+14. on terminal - "dvc init"
+15. create a local folder as "local_s3" (temporary work)
+16. on terminal - "dvc remote add -d mylocal local_s3"
