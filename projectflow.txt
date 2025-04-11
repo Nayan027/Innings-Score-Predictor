@@ -7,3 +7,18 @@
 5. cookiecutter -c v1 https://github.com/drivendata/cookiecutter-data-science
 6. Rename src.models -> src.model
 7. git add - commit - push
+
+
+-------------------------Setup MLFlow on Dagshub---------------------------
+8. Go to: https://dagshub.com/dashboard
+9. Create > New Repo > Connect a repo > (Github) Connect > Select your repo > Connect
+10. Copy experiment tracking url and code snippet. (Also try: Go To MLFlow UI)
+11. pip install dagshub & mlflow
+
+12. Run exp notebooks(a. Exploratory Data Analysis  / EDA.ipynb
+                      b. Base-Regressor-model      / base_model.ipynb
+                      c. Best-Performing-Algorithm/ model_selection.ipynb
+                      d. Best-Model's-tuning     / model_tuning.ipynb) & visualize performance on mlflow-ui(sort by: user)
+13. git add - commit - push
+
+14. dvc init
