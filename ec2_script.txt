@@ -1,0 +1,45 @@
+#!/bin/bash
+
+# Update package list
+sudo apt-get update
+
+# Install Python pip and venv
+sudo apt install python3-pip -y
+sudo apt install python3-venv -y
+
+# Install Ruby dependencies for CodeDeploy agent
+sudo apt-get install ruby-full ruby-webrick wget -y
+
+# OPTIONAL: Wait for app code to be copied
+sleep 5
+
+# Set up Flask app environment
+cd /home/ubuntu/flaskapp || {
+  echo "flaskapp directory not found!"
+  exit 1
+}
+
+# Create virtual environment and activate it
+python3 -m venv venv
+source venv/bin/activate
+
+# Install Python dependencies
+pip install --upgrade pip
+pip install -r requirements.txt
+
+# Start Flask app using Gunicorn
+gunicorn -w 4 -b 0.0.0.0:5000 app:app &
+
+# === Install CodeDeploy agent (optional) ===
+echo "Installing CodeDeploy agent..."
+cd /tmp
+wget https://aws-codedeploy-us-east-1.s3.us-east-1.amazonaws.com/releases/codedeploy-agent_1.3.2-1902_all.deb
+mkdir codedeploy-agent_1.3.2-1902_ubuntu22
+dpkg-deb -R codedeploy-agent_1.3.2-1902_all.deb codedeploy-agent_1.3.2-1902_ubuntu22
+sed 's/Depends:.*/Depends:ruby3.0/' -i ./codedeploy-agent_1.3.2-1902_ubuntu22/DEBIAN/control
+dpkg-deb -b codedeploy-agent_1.3.2-1902_ubuntu22/
+sudo dpkg -i codedeploy-agent_1.3.2-1902_ubuntu22.deb
+
+
+# Check agent status
+sudo service codedeploy-agent status

@@ -22,5 +22,17 @@
 13. git add - commit - push
 
 14. on terminal - "dvc init"
-15. create a local folder as "local_s3" (temporary work)
+15. create a local folder as "local_s3" (temporary work/testing)
 16. on terminal - "dvc remote add -d mylocal local_s3"
+
+18. add file - dvc.yaml (till model evaluation.metrics)
+19. add file - params.yaml
+20. DVC pipeline is ready to run - dvc repro (on terminal:[ git rm -r --cached 'data/' ])
+21. Once do - dvc status
+22. git add - commit - push
+
+23. Need to add S3 as remote storage - Create IAM User(keep cred) and S3 bucket
+24. pip install - dvc[s3] & awscli
+25. Checking/deleting dvc remote (optional) - [dvc remote list & dvc remote remove <name>] 
+26. Set aws cred - aws configure
+27. Add s3 as dvc remote storage - dvc remote add -d myremote s3://<bucket-name>

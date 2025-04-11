@@ -1,0 +1,11 @@
+ody {
+    font-family: 'Open Sans', sans-serif;
+    color: white;
+    padding: 20px;
+}
+.result-p {
+    font-size: 20px;
+    background: rgba(0,0,0,0.6);
+    padding: 10px;
+    border-radius: 8px;
+}

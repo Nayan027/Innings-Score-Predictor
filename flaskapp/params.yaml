@@ -1,0 +1,15 @@
+# params.yaml
+# data_ingestion:
+#   test_size: 0.20
+
+feature_engineering:  
+  columns_to_encode:                  # List of categorical columns that need onehotencoding
+    - bat_team
+    - bowl_team
+
+  columns_to_scale:
+    - overs
+    - runs 
+    - wickets 
+    - runs_last_5 
+    - wickets_last_5

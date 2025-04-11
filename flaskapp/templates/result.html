@@ -1,0 +1,42 @@
+
+<!-- flaskapp/templates/result.html -->
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Prediction Result</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}">
+    <style>
+        body {
+            background-color: #1e1e2f; /* same as index.html */
+            color: #f0f0f0;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+        }
+
+        h1 {
+            font-size: 3rem;
+            margin-bottom: 30px;
+            color: #00ffff;
+        }
+
+        p {
+            font-size: 2rem;
+            font-weight: bold;
+            color: #00ff88;
+            margin: 10px 0;
+        }
+    </style>
+</head>
+<body>
+    <h1>Prediction Result</h1>
+    <p>Predicted Innings Total: {{ prediction }}</p>
+    <p>Minimum Expected Total: {{ lower_limit }}</p>
+    <p>Maximum Expected Total: {{ upper_limit }}</p>
+</body>
+</html>
+
