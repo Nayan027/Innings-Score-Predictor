@@ -8,7 +8,7 @@ import joblib
 import os
 import sys
 import yaml
-from src.logger import logging  
+from logger import logging  
 
 warnings.filterwarnings("ignore")
 
