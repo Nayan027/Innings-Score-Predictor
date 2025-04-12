@@ -95,109 +95,141 @@ d. Uses CodePipeline to glue everything together
 3. git add > commit > push to main repository.
 
 4. Enter AWS console login 
-5. Create an IAM user and create 2 Service Roles:
+5. Create IAM user & set up IAM Configuration (create 2 custom service roles)
 
-(a). Code Deploy service role
+(a) Create CodeDeploy Service Role
+  Go to IAM > Roles > Create role
+  Trusted entity: AWS service
+  Use case: CodeDeploy
+  Click Next until permissions screen
+  Attach the following 6 policies:
+      AmazonEC2FullAccess
+      AmazonS3FullAccess
+      AWSCodeDeployFullAccess
+      AWSCodeDeployRole
+      AmazonEC2RoleforAWSCodeDeploy
+      AmazonEC2RoleforAWSCodeDeployLimited
+      Name the role appropriately
+  Click Create role
 
-Go to roles > create role > entity: AWS service > usecase: CodeDeploy > Next > Next >
-Give the Role name > create role > open the role >
-In Permissions policies > select add permissions(attach policies)    > select these 6 permissions:
+(b) Create EC2-CodeDeploy Service Role
+  Same steps as above, but choose EC2 as use case
+  Attach these 3 policies:
+      AmazonEC2FullAccess
+      AmazonS3FullAccess
+      AWSCodeDeployFullAccess
+  Name and create the role
 
-i.   AmazonEC2FullAccess
-ii.  AmazonS3FullAccess
-iii. AWSCodeDeployFullAccess
-iv.  AWSCodeDeployRole 
-v.   AmazonEC2RoleforAWSCodeDeploy
-vi.  AmazonEC2RoleforAWSCodeDeployLimited
+6. Launch EC2 Instance
+  Name the instance
+  AMI: Ubuntu 22.04
+  Create or use existing .pem key pair
+  Create a security group:
+          Allow HTTP (80)
+          Allow HTTPS (443)
+  Launch instance
 
-(b). EC2-CodeDeploy connection service role (same steps as above except pick EC2 for usecase)    > select 3 permissions
+  a. Configure Security Group for Custom Port (e.g., 5000):
+  Go to Running Instances > Security > Security Groups > Edit Inbound Rules
+  Add rule:
+  Port range: 5000
+  Source: 0.0.0.0/0
 
-i.   AmazonEC2FullAccess
-ii.  AmazonS3FullAccess
-iii. AWSCodeDeployFullAccess
+  b. Attach IAM Role to EC2:
+  select running instance > Go to Actions > Security > Modify IAM role
+  Attach the EC2 service role created earlier
 
+7. EC2 Initial Setup
+  Connect to the instance via browser-based SSH
+  Run: vim install.sh
 
-6. Launch an EC2-instance:
-- name it > pick ubuntu 22.04 version AMI >
-- create key pair or use existing one (.pem) >
-- create security group > allow both http & https > launch instance >
-Now:
-- select running instance > Go to securities > click on security groups >
-- select Edit Inbound rules > Add rule > port range: 5000 > next to custom select 0.0.0.0/0 > save rules
+  In install.sh:
+  Press i to insert
+  Paste content from ec2_script.txt   (don't use ctrl+v for pasting here do it manually)
 
-note: port range depends on what we use in our app.py when defining port
-Now again,
+  Save & Exit:
+  ESC, then :wq, then ENTER
 
-- select instance > Go to Actions > Security (Modify IAM role) >
-- select IAM service role we created with EC2 usecase > update IAM role.
-
-Now lastly,
-- select insatnce > connect > connect 
-- on connection establishment > write command 'vim install.sh' > enter
-
-now, we're to insert a code in this empty file (code is given in ec2_script.txt file in our project so copy it) 
-
-To Insert > press 'i'
-To Paste  > right-click + paste
-To Save & Exit > press 'esc' button 
-                 press ':' 
-                 write 'wq'        > enter
-
-Back to our terminal in EC2 > write command 'bash install.sh' > enter
-
-
-7. Search CodeDeploy > Getting Started > Create Application > Name it > pick EC2 as compute platform > create Application
-Create Deployment Group > name it > add service role we created with CodeDeploy as usecase > Deployment type: In-place
-Environment configuration : Amazon EC2 instances key: name , value: 'running-ec2-instance' > 
-Install AWS CodeDeploy Agent : Never (due to updates mismatching in EC2 & CodeDeploy) > Disable load balancing > create deployment group
-
-
-8. Now CodePipeline
-Getting started > create pipeline > creation option: build custom pipeline > Next
-pipeline settings stage
-- name it
-- execution mode : superseded
-- service role and name: new (default) > Next
-
-Add source stage 
-- add source > github(via app) > create connection/use existing, to your github > pick repo > default branch main
-Output artifact format: CodePipeline default > Next
+  Then run: bash install.sh
 
 
-add build stage:
-Build provider: other( Aws CodeBuild )
-create project > name it > Project type: Default > Environment: default all except Running mode; choose Instance not container
 
-no change only in buildspec; select buildspec
-and untick CloudWatch logs > Continue to CodePipeline
+8. CodeDeploy Service 
+  a.create CodeDeploy Application
+    Go to CodeDeploy > Getting Started > Create Application
+    Name it
+    Compute platform: EC2
 
+  b.Create Deployment Group:
+    Name it
+    Attach CodeDeploy service role
+    Deployment type: In-place
+    Environment config:
+      EC2 tag key: name,   Value: <running-ec2-instance>
+    Install agent: Choose Never (to avoid version mismatch)
+    Disable load balancing
+    Click Create Deployment Group
+    on creation of deployment group now we move to CodePipeline to automate the entire workflow
 
-back to build stage > Next
+9. Setup CodePipeline
+  a.Creation stage
+  Getting started > create pipeline > creation option: build custom pipeline > Next
 
-add test stage > can skip it 
+  b.Pipeline Settings Stage
+    Pipeline name
+    Execution mode: Superseded
+    Service role: New (default)
+    Click Next
 
-add deploy stage > Deploy provider: AWS CodeDeploy > here we give application name & deployment group name > Next > review > create pipeline
+  c.Source Stage
+    Provider: GitHub (via app)
+    Create connection / use existing
+    Choose repository and main branch
+    Output artifact format: CodePipeline default
 
+  d.Build Stage
+    Provider: AWS CodeBuild
+    Create project:
+    Name the project
+    Project type: Default
+    Environment: All default EXCEPT:
+    Running mode: Instance (not container)
+    Buildspec: select option to USE buildspec.yaml from source
+    Untick CloudWatch logs
+    Click Continue to CodePipeline
 
-now our pipeline builds sourceartifact is input artifact for build stage and build artifact is input artifact for deploy stage 
-on successful run of all stages go to ec2 instance connected terminal 
+  e.Test Stage
+    Can be skipped
 
-to checck if pipeline executed or not check list of dir- 'ls'
-flaskapp appears
-now use these steps to run app
-cd /home/ubuntu/flaskapp > enter 
-check for files & folders in flaskapp > 'ls'
-we must find app.py, prod_requirements.txt, buildspec.yaml, appspec.ynl, params.yaml 
+  f.Deploy Stage
+    Deploy provider: AWS CodeDeploy
+    Choose the application name and deployment group from earlier
+    Review and create pipeline
 
-run pip3 install -r prod_requirements.txt
-run python3 app.py
+10.Pipeline Execution
+  Once all stages execute i.e. Sourece --> Build --> Deploy then,
+  Go to EC2 terminal, check list of directories:
+  run: ls
+  You should see the directory flaskapp in the list
 
-got a link to go to to give dagshub authorization like this:
-Open the following link in your browser to authorize the client:
-https://dagshub.com/login/oauth/authorize?state
+11.Run Your App
+  run: cd /home/ubuntu/flaskapp    
+  run: ls                   
 
-select that link > right click + copy > open link pasting it on internet > allow access to dagshub for a month or day acc to our need
+  Check existence of necessary files and folders to run app:
+  app.py, prod_requirements.txt, templates, static, buildspec.yaml, appspec.yaml, params.yaml
 
-then our app works by itself > copy http link given by instance select it's middle ip > replace it with public ip on screen right below the terminal 
+  run: pip3 install -r prod_requirements.txt
+  run: python3 app.py
 
-our app is up and running.
+12.Authorize with DAGsHub (If prompted)
+  Copy the DAGsHub OAuth link
+  Open in browser
+  Authorize access
+
+13.Access the Running App
+  From EC2 console:
+  Copy the public IP
+  Replace the 127.0.0.1 or internal IP in terminal link with EC2 public IP
+
+Visit in browser:    http://<EC2-public-IP>:5000
