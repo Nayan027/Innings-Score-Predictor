@@ -3,7 +3,6 @@ import pandas as pd
 import pickle
 from sklearn.linear_model import Lasso
 from sklearn.metrics import r2_score
-import yaml
 from src.logger import logging
 
 

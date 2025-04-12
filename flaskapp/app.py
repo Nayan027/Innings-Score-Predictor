@@ -1,3 +1,5 @@
+import sys
+import os
 from flask import Flask, render_template, request
 import mlflow
 import dagshub
@@ -5,8 +7,6 @@ import pandas as pd
 import warnings
 import traceback
 import joblib
-import os
-import sys
 import yaml
 from logger import logging  
 
@@ -38,10 +38,12 @@ def get_latest_model_version(model_name):
         latest_versions = client.get_latest_versions(model_name, stages=["None"])
     return latest_versions[0].version if latest_versions else None
 
+
 model_version = get_latest_model_version(model_name)
 model_uri = f"models:/{model_name}/{model_version}"
 print(f"Fetching model from: {model_uri}")
 model = mlflow.pyfunc.load_model(model_uri)
+
 
 # ------------------- Load encoder and scaler -------------------
 local_path = mlflow.artifacts.download_artifacts(artifact_uri=model_uri)
@@ -86,11 +88,11 @@ def predict():
         }
 
 
-    # Custom Validations
+    # Custom Validating some basic logics to counter stupid arguments
         if input_dict['bat_team'] == input_dict['bowl_team']:
             raise ValueError("Batting and Bowling teams cannot be the same.")
 
-        if not (3.6 <= input_dict['overs'] <= 20):
+        if not (4.1 <= input_dict['overs'] <= 20):
             raise ValueError("Overs must be between 4.1 and 20.")
 
         if input_dict['wickets'] > 10:

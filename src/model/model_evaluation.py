@@ -1,39 +1,18 @@
+import sys
 import numpy as np
 import pandas as pd
-import pickle
-import json
-from sklearn.metrics import mean_absolute_error, r2_score, mean_absolute_percentage_error, mean_squared_error
-import logging
 import mlflow
 import mlflow.sklearn
 import dagshub
-import os
+import pickle
+import json
+from sklearn.metrics import mean_absolute_error, r2_score, mean_absolute_percentage_error, mean_squared_error
 from src.logger import logging
 
 
-# Below code block is for production use
-# -------------------------------------------------------------------------------------
-# Set up DagsHub credentials for MLflow tracking
-# dagshub_token = os.getenv("CAPSTONE_TEST")
-# if not dagshub_token:
-#     raise EnvironmentError("CAPSTONE_TEST environment variable is not set")
 
-# os.environ["MLFLOW_TRACKING_USERNAME"] = dagshub_token
-# os.environ["MLFLOW_TRACKING_PASSWORD"] = dagshub_token
-
-# dagshub_url = "https://dagshub.com"
-# repo_owner = "vikashdas770"
-# repo_name = "YT-Capstone-Project"
-
-# # Set up MLflow tracking URI
-# mlflow.set_tracking_uri(f'{dagshub_url}/{repo_owner}/{repo_name}.mlflow')
-# -------------------------------------------------------------------------------------
-
-# Below code block is for local use
-# -------------------------------------------------------------------------------------
 mlflow.set_tracking_uri('https://dagshub.com/nayanparvez90/Innings-Score-Predictor.mlflow')
 dagshub.init(repo_owner='nayanparvez90', repo_name='Innings-Score-Predictor', mlflow=True)
-# -------------------------------------------------------------------------------------
 
 
 # ==================================================================================================================
