@@ -21,6 +21,7 @@ artifacts:
     - flaskapp/static/**
     - flaskapp/logger/**
     - scripts/**
+    - params.yaml
     - appspec.yml
 
     
