@@ -19,7 +19,7 @@ artifacts:
     - flaskapp/**
     - flaskapp/templates/**
     - flaskapp/static/**
-    - flaskapp/logger/**
+    - flaskapp/logger/__init__.py
     - scripts/**
     - params.yaml
     - appspec.yml
