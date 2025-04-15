@@ -40,6 +40,8 @@ stages:
     - src/model/model_evaluation.py
     metrics:
     - reports/metrics.json
+    - models/encoder.pkl
+    - models/scaler.pkl
     outs:
     - reports/experiment_info.json                 # Add the model_info.json file as an output
 
