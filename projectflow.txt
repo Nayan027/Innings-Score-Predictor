@@ -72,14 +72,32 @@ b. Builds it with CodeBuild
 c. Deploys it to an EC2 instance with CodeDeploy
 d. Uses CodePipeline to glue everything together
 
-- services we'll be using:
-            Service	                            Purpose
-            IAM	                 Set role-services for EC2 and CodeDeploy
-            EC2	                    Run our web app / service
-            S3	                 Store build artifacts (we don't even need to create-codepipeline takes care of it)
-            CodeBuild	             Compile / test / package code
-            CodeDeploy	              Deploy built artifacts to EC2
-            CodePipeline	            Automates the entire flow
+- services we'll be using: CI/CD Flow using AWS CodePipeline (6 Services)
+    1. IAM
+    Create custom service roles for EC2 and CodeDeploy
+    Manage permissions for each service.
+
+    2. EC2
+    Set up as the deployment target.
+    Attach the appropriate IAM role.
+    Writing and running a shell script manually using Vim and Bash.
+
+    3. S3
+    Used by CodePipeline internally to store artifacts.
+    Auto-created and managed; remember to delete it after use.
+
+    4. CodeBuild
+    Handles the build phase.
+    Uses a buildspec to compile/test the app.
+
+    5. CodeDeploy
+    Manages deployment to EC2.
+    Uses the custom IAM role and an AppSpec file.
+
+    6. CodePipeline
+    Orchestrates the entire flow: Source → Build → Deploy (we're skipping test stage).
+    Connects S3, CodeBuild, and CodeDeploy stages.
+
 
 - Before moving to aws console we need to do some steps must be completed in order to smoothly deploy 
   our app on live server i.e. into production such as:
@@ -145,7 +163,7 @@ d. Uses CodePipeline to glue everything together
   Run: vim install.sh
 
   In install.sh:
-  Press i to insert
+  Press <i> to insert
   Paste content from ec2_script.txt   (don't use ctrl+v for pasting here do it manually)
 
   Save & Exit:
@@ -235,6 +253,9 @@ d. Uses CodePipeline to glue everything together
 13.Access the Running App
   From EC2 console:
   Copy the public IP
-  Replace the 127.0.0.1 in http://127.0.0.1:5000 or internal IP in terminal link with EC2 public IP
+  Replace the Private IP such as 127.0.0.1 in http://127.0.0.1:5000 in terminal link with EC2 Public IP
 
 Visit in browser:    http://<EC2-public-IP>:5000
+
+when done, delete all services:
+IAM user, CodeBuild, CodeDeploy, CodePipeline, S3, EC2

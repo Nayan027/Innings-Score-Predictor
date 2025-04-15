@@ -23,7 +23,8 @@ stages:
     - src/features/feature_engineering.py
     outs:
     - data/processed
-    
+    - models/encoder.pkl           
+    - models/scaler.pkl
 
   model_building:
     cmd: python src/model/model_building.py
@@ -40,10 +41,8 @@ stages:
     - src/model/model_evaluation.py
     metrics:
     - reports/metrics.json
-    - models/encoder.pkl
-    - models/scaler.pkl
     outs:
-    - reports/experiment_info.json                 # Add the model_info.json file as an output
+    - reports/experiment_info.json                 
 
   model_registration:
     cmd: python src/model/register_model.py

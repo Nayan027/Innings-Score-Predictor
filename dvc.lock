@@ -49,6 +49,14 @@ stages:
       md5: fba7fb13887840ba7d31ac990cbd86ec.dir
       size: 7160453
       nfiles: 2
+    - path: models/encoder.pkl
+      hash: md5
+      md5: 6402e81f181a6f62713fbaf32d33c53d
+      size: 1727
+    - path: models/scaler.pkl
+      hash: md5
+      md5: fa1f392dac87b340ecc6b3543f151163
+      size: 1087
   model_building:
     cmd: python src/model/model_building.py
     deps:
