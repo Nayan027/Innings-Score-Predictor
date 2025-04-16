@@ -276,7 +276,7 @@ note3 - logger file added here coz we used our custom logging in our app also.
 10.Pipeline Execution
   Once all stages execute i.e. Source --> Build --> Deploy, then 
    - Go to EC2 terminal, check list of directories:
-   - run: ls
+   - run: ls  (to check list)
   You should see the directory "flaskapp" in the list
 
 11.Run Your App
@@ -290,8 +290,8 @@ note3 - logger file added here coz we used our custom logging in our app also.
   - run: python3 app.py
 
 12.Authorize with DAGsHub (If prompted)
-  - Copy the DAGsHub OAuth link (don't use ctrl+c instead right click and copy)
-  - Open in browser
+  - Copy the DAGsHub OAuth link (right click and copy)
+  - Open browser and paste in it 
   - Authorize access for 1 day/ week/ month 
 
 13.Access the Running App

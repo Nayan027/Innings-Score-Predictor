@@ -310,19 +310,25 @@ mlruns/
 
 - SSH into EC2
 
-- Navigate to project folder:
+```Terminal
+# Navigate to project folder
+cd /home/ubuntu/flaskapp
 
-- cd /home/ubuntu/flaskapp
+# Installing dependencies required for our flaskapp
+pip3 install -r prod_requirements.txt
 
-- pip3 install -r prod_requirements.txt
-
-- python3 app.py
+# Running flaskapp on EC2 instance
+python3 app.py
+```
 
 #### Authorize with DagsHub if prompted
 
 - Access app in browser:
 
-- http://<'EC2-Public-IP'>:5000
+```Terminal
+# Replace Private-IP with Public-IP in given link
+http://<'EC2-Public-IP'>:5000
+```
 
 #### 📊 Tools & Tech Stack
 
