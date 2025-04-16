@@ -4,6 +4,17 @@ This is an End to end Project implementing Machine Learning Operations to develo
 Using tools like DVC, MLflow, DagsHub, Flask, and AWS CodeBuild, CodeDeploy, CodePipeline, etc. It demonstrates a production-ready ML pipeline with experiment tracking, model versioning, and cloud integration.
 
 ---
+
+## 🖥️ Demonstration of FlaskApp on Live Server 
+https://github.com/user-attachments/assets/8d5775c5-c102-4c9d-a9e8-1b11d3437787
+
+- Tested prediction of an Inning's End Score
+- Validated if our logic holds or failed such as:
+    - same bat-team and bowl-team
+    - overs below 4.1 and above 20
+    - wickets fell more than 10
+---
+
 ## 🆕 Whats's New? : "CodePipeline Over Docker".
 
 ### ❌ Why Not Use Docker?
