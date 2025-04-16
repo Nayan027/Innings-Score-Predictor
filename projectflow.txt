@@ -59,11 +59,15 @@
 31. Run the app and test it in your local system:
   - test if we're getting any error before the site is loaded
   - if the logic built in our app is working or failing (eg: same team bats and bowls)
-  - use some test data from interim to see how the predictions are doing.
+  - make some predictions to see how well the scores are being predicted.
 
-      bat_team        |      bowl_team   |  runs |  wickets | overs |  runs_last_5 |  wickets_last_5  |  total (actual)
-Kolkata Knight Riders |  Mumbai Indians  |   55  |    1     |  7.3  |       42     |       1          |  187
 
+      bat_team        |      bowl_team   |  runs |  wickets | overs |  runs_last_5 |  wickets_last_5 
+---------------------------------------------------------------------------------------------------------------- 
+Royal Challeng. Bang. | Rajasthan Royal  |  100  |    5     |  14.1  |      32     |       2          
+----------------------------------------------------------------------------------------------------------------
+Delhi Daredevils      |  Mumbai Indians  |  110  |    2     |  10.3 |      55      |       1
+----------------------------------------------------------------------------------------------------------------
 
 
 
@@ -172,18 +176,22 @@ note3 - logger file added here coz we used our custom logging in our app also.
  - Launch instance
 
   6.(a).Configure Security Group for Custom Port (e.g.5000 (that we've used in our app.py)):
-   - Go to Running Instances > Security > Security Groups > Edit Inbound Rules
+   - Go to Running Instances > Security > Security Groups > Inbound Rules > Edit Inbound Rules
    - Add rule:
-   - Port range: 5000
-   - Source: 0.0.0.0/0
+      - Port range: 5000
+      - Source: 0.0.0.0/0
+   - Save Rules
 
   6.(b).Attach IAM Role to EC2:
    - Select running instance > Go to Actions > Security > Modify IAM role
    - Attach the EC2 service role created earlier
-
+   - Update IAM role
 
 7.EC2 Initial Setup
   - Connect to the instance via browser-based SSH
+  - let default settings as it is and 'connect'
+
+  Once connection has been established
   - Run: vim install.sh
 
   In install.sh:
@@ -191,7 +199,7 @@ note3 - logger file added here coz we used our custom logging in our app also.
   - Copy & Paste content from "ec2_script.txt"   (use right click + Paste for pasting)
 
   Save & Exit:
-  - Press <ESC>, then Press <:> write <wq>, then ENTER
+  - Press <ESC>, then Press <:> write <wq>, then press ENTER
   - Then Run: bash install.sh
   
   note: a couple of ui based "Daemon using outdated libraries" might pop up after running bash install.sh 
@@ -205,14 +213,20 @@ note3 - logger file added here coz we used our custom logging in our app also.
    - Go to CodeDeploy > Getting Started > Create Application
    - Name it
    - Compute platform: EC2
+   - Click Create Application
 
   8.(b).Create Deployment Group:
    - Name it
-   - Attach CodeDeploy service role
+   - Attach CodeDeploy service role we created earlier
    - Deployment type: In-place
+
    - Environment config:
+      Select Amazon EC2 instances out of the 3 options
       EC2 tag key: name,   Value: <running-ec2-instance>
-   - Install agent: Choose Never (to avoid version mismatch)
+
+   - In Agent configuration with AWS Systems Manager section;
+      - Install agent: Choose Never (to avoid version mismatch)
+
    - Disable load balancing
    - Click Create Deployment Group
 
@@ -223,35 +237,41 @@ note3 - logger file added here coz we used our custom logging in our app also.
    - Getting started > create pipeline > creation option: build custom pipeline > Next
 
   9.(b).Pipeline Settings Stage
-   - Pipeline name
-   - Execution mode: Superseded
+   - Give ur Pipeline a name
+   - Execution mode: Superseded        (meaning: If a new run is submitted while an older run is still in progress, the older run is automatically cancelled.)
    - Service role: New (default)
    - Click Next
 
-  9.(c).Source Stage
+  9.(c).Add Source Stage
    - Provider: GitHub (via app)
    - Create connection / use existing
    - Choose repository and main branch
    - Output artifact format: CodePipeline default
+   - Click Next
 
-  9.(d).Build Stage
-   - Provider: AWS CodeBuild
-   - Create project:
+  9.(d).Add Build Stage
+   - Build Provider: Otherbuild providers (AWS CodeBuild)
+
+   - Create project (opens a new tab):
       - Name the project
       - Project type: Default
-      - Environment: All default EXCEPT:
-      - Running mode: Instance (not container)
-      - Buildspec: select option to USE buildspec.yaml from source
-      - Untick CloudWatch logs
-   - Click Continue to CodePipeline
+      - Now, let All be default EXCEPT:
+            - Running mode: select "Instance" (not container)
+            - Buildspec: select option to "Use buildspec.yaml" from source
+            - Untick CloudWatch logs
 
-  9.(e).Test Stage
+   - Click Continue to CodePipeline (brings back to original tab)
+   - Build-type: Single build
+   - Click on Next (leave rest as it is)
+
+  9.(e).Add Test Stage
    - Can be skipped
 
-  9.(f).Deploy Stage
+  9.(f).Add Deploy Stage
    - Deploy provider: AWS CodeDeploy
-   - Choose the application name and deployment group from earlier
-   - Review and create pipeline
+   - Choose the Application name and Deployment group created earlier in CodeDeploy
+   - Click Next
+   - Review and Create Pipeline
 
 10.Pipeline Execution
   Once all stages execute i.e. Source --> Build --> Deploy, then 

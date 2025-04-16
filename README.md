@@ -4,7 +4,7 @@ This is an End to end Project implementing Machine Learning Operations to develo
 Using tools like DVC, MLflow, DagsHub, Flask, and AWS CodeBuild, CodeDeploy, CodePipeline, etc. It demonstrates a production-ready ML pipeline with experiment tracking, model versioning, and cloud integration.
 
 ---
-## 🆕 Whats's New? : 'CodePipeline Over Docker'.
+## 🆕 Whats's New? : "CodePipeline Over Docker".
 
 ### ❌ Why Not Use Docker?
 While Docker is a powerful tool for containerizing applications, it can sometimes introduce unnecessary complexity—especially for straightforward deployment pipelines or for beginners just getting into MLOps. Writing Dockerfiles, building images, and managing containers can slow down development and add infrastructure overhead that isn't always needed for smaller or more focused projects.
