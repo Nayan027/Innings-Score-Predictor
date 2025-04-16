@@ -310,12 +310,20 @@ mlruns/
 - Manages deployment to EC2.
     
 - Uses the custom IAM role and an AppSpec file.
-
+---
 #### CodePipeline Service:
     
 - Orchestrates the entire flow: Source → Build → Deploy (we're skipping test stage).
     
 - Connects S3, CodeBuild, and CodeDeploy stages.
+---
+
+## Demonstration of Successful Pipeline Execution on CodePipeline Creation
+https://github.com/user-attachments/assets/c7038f6a-9025-4e3d-b53f-f9fcef203a95
+- Source: Github(via App)
+- Build: CodeBuild
+- Deploy: CodeDeploy
+---
 
 #### 🚤 Deploy and Run
 
