@@ -16,7 +16,7 @@
 10. Copy experiment tracking url and code snippet. (Also try: Go To MLFlow UI)
 11. pip install dagshub & mlflow
 
-12. copy and paste requirements.txt from my project
+12. Copy and paste requirements.txt from my project
 13. pip install -r requirements.txt
 
 14. Run exp notebooks(a. Exploratory Data Analysis  / EDA.ipynb
@@ -38,8 +38,8 @@
     - model_evaluation.py
     - register_model.py
 
-20. add file - dvc.yaml (till model evaluation.metrics)
-21. add file - params.yaml
+20. Add file - dvc.yaml (till model evaluation.metrics)
+21. Add file - params.yaml
 22. DVC pipeline is ready to run - dvc repro (on terminal:[ git rm -r --cached 'data/' ])
 23. Once do - dvc status
 24. git add - commit - push
@@ -50,15 +50,16 @@
 28. Set aws cred - aws configure
 29. Add s3 as dvc remote storage - dvc remote add -d myremote s3://<bucket-name>
 
-30. Create new dir - flaskapp | Inside that, add rest of the files and dir:
-    files  : [app.py, prod_requirements.txt]
-    folders: [static, templates]    
+30. Create new dir -> [flaskapp]   
+  - Inside that, add rest of the files and dir:
+    - files  : [app.py, prod_requirements.txt]
+    - folders: [static, templates]    
 
 
 31. Run the app and test it in your local system:
-    - test if we're getting any error before the site is loaded
-    - if the logic built in our app is working or failing (eg: same team bats and bowls)
-    - use some test data from interim to see how the predictions are doing.
+  - test if we're getting any error before the site is loaded
+  - if the logic built in our app is working or failing (eg: same team bats and bowls)
+  - use some test data from interim to see how the predictions are doing.
 
       bat_team        |      bowl_team   |  runs |  wickets | overs |  runs_last_5 |  wickets_last_5  |  total (actual)
 Kolkata Knight Riders |  Mumbai Indians  |   55  |    1     |  7.3  |       42     |       1          |  187
@@ -79,6 +80,7 @@ a. Pulls code from our GitHub repo
 b. Builds it with CodeBuild
 c. Deploys it to an EC2 instance with CodeDeploy
 d. Uses CodePipeline to glue everything together
+e. S3 bucket is managed internally by CodePipeline to store 'sourceartifact/' and 'buildartifact/'
 
 - services we'll be using: CI/CD Flow using AWS CodePipeline (6 Services):
     1. IAM
@@ -107,10 +109,10 @@ d. Uses CodePipeline to glue everything together
     - Connects S3, CodeBuild, and CodeDeploy stages.
 
 
-- Before moving to aws console we need to do some steps must be completed in order to smoothly deploy 
+- Before moving to aws console we need to do some steps which must be done in order to smoothly deploy 
   our app on live server i.e. into production such as:
 
-1.Add code to below files/folders:
+1.Add code to below folders/files:
   - scripts/
   - buildspec.yaml
   - appspec.yaml
@@ -121,7 +123,7 @@ d. Uses CodePipeline to glue everything together
 --------------------------------------------- For Production Purposes ------------------------------------------------
 
 note1 - A scripts/ folder has been added to the project along with buildspec.yaml and appspec.yaml. 
-            These files are used for deployment automation (i.e. in AWS CodePipeline/CodeDeploy workflows).
+            These files are used for deployment automation (in AWS CodeBuild/CodeDeploy/CodePipeline workflows).
 
 note2 - params.yaml added coz we using it in our app in modular way and not hard-coding.
 
@@ -186,7 +188,7 @@ note3 - logger file added here coz we used our custom logging in our app also.
 
   In install.sh:
   - Press <i> to insert
-  - Paste content from ec2_script.txt   (use right click + Paste for pasting)
+  - Copy & Paste content from "ec2_script.txt"   (use right click + Paste for pasting)
 
   Save & Exit:
   - Press <ESC>, then Press <:> write <wq>, then ENTER

@@ -4,7 +4,7 @@ This is an End to end Project implementing Machine Learning Operations to develo
 Using tools like DVC, MLflow, DagsHub, Flask, and AWS CodeBuild, CodeDeploy, CodePipeline, etc. It demonstrates a production-ready ML pipeline with experiment tracking, model versioning, and cloud integration.
 
 ---
-## 🆕 A Simplified MLOps Approach: 'CodePipeline Over Docker'.
+## 🆕 Whats's New? : 'CodePipeline Over Docker'.
 
 ### ❌ Why Not Use Docker?
 While Docker is a powerful tool for containerizing applications, it can sometimes introduce unnecessary complexity—especially for straightforward deployment pipelines or for beginners just getting into MLOps. Writing Dockerfiles, building images, and managing containers can slow down development and add infrastructure overhead that isn't always needed for smaller or more focused projects.
@@ -15,7 +15,7 @@ Instead of Docker, this project uses AWS CodePipeline in combination with CodeBu
 ### 🔑 Key Takeaway
 This approach shows that you don’t need Docker to build effective, real-world MLOps pipelines. Cloud-native tools like CodePipeline can handle the job efficiently while remaining user-friendly and maintainable. It lowers the barrier to entry for those new to MLOps and encourages quicker iterations and deployments without diving deep into infrastructure management.
 
-### 🧠 Conclusion
+### 🧠 Conclusion: A Simplified MLOps Approach
 By choosing CodePipeline over Docker, this project introduces a fresh, simplified approach to MLOps deployment. It's ideal for solo developers, students, or teams looking for a scalable yet accessible solution. This project is a clear example of how modern cloud-native workflows can replace traditional container-based methods without compromising functionality or reliability.
 
 ---
@@ -205,7 +205,7 @@ $env:BUCKET_NAME="your_bucket_name" -->
 ## 📌 .gitignore Recommendations
 
 ```gitignore
-data_fol/
+data/
 local_s3/
 __pycache__/
 *.log
@@ -230,20 +230,6 @@ mlruns/
 
 ## ⚙️ CI/CD with AWS
 
-### Plan:
-
-- Create a pipeline that:
-
-- Pulls code from GitHub
-
-- Builds with CodeBuild
-
-- Stores SourceArtifact/ & BuildArtifact/ in S3 internally managed by CodePipeline
-
-- Deploys to EC2 with CodeDeploy
-
-- Glues entire flow using CodePipeline
-
 #### AWS Services Used:
 
 - IAM : Create custom service roles for EC2 and CodeDeploy
@@ -258,43 +244,67 @@ mlruns/
 
 - CodePipeline : Orchestrates CI/CD process
 
+### Plan:
+
+- Create a pipeline that:
+
+- Pulls code from GitHub
+
+- Builds with CodeBuild
+
+- Stores 'SourceArtifact/' & 'BuildArtifact/' in S3 internally managed by CodePipeline
+
+- Deploys to EC2 with CodeDeploy
+
+- Glues entire flow using CodePipeline
+
 #### Before AWS Console Work
 
-- Add prod_requirements.txt and Copy-Paste logger/ and params.yaml into flaskapp/
+- Add 'prod_requirements.txt' into 'flaskapp/'
 
-- Add scripts/, buildspec.yaml, appspec.yaml into root directory
+- Copy-Paste 'logger/' and 'params.yaml' from root dir into 'flaskapp/'
+
+- Add 'scripts/', 'buildspec.yaml', 'appspec.yaml' into root directory
 
 - Git add, commit, and push
 
-#### AWS Console Steps:
+#### IAM Configurations:
 
-- IAM Setup
+- Create custom service roles for EC2 and CodeDeploy
 
-- Create custom-service-roles for EC2 and CodeDeploy with relevant policies
+- Manage permissions for each service.
 
 #### EC2 Setup:
 
-- Launch Ubuntu 22.04 instance
+- Set up as the deployment target.
+    
+- Attach the appropriate IAM role.
+    
+- Writing and running a shell script manually using Vim and Bash.
 
-- Allow HTTP, HTTPS, and port 5000 in security group
+#### S3 Bucket:
 
-- Attach IAM role to EC2
+- Used by CodePipeline internally to store artifacts.
 
-- SSH into EC2 and run bash install.sh script to install dependencies
+- Auto-created and managed; remember to delete it after use.
 
-### CodeDeploy:
+#### CodeBuild Service:
+    
+- Handles the build phase.
+    
+- Uses a buildspec to compile/test the app.
 
-- Create Application & Deployment Group
+#### CodeDeploy Service:
+    
+- Manages deployment to EC2.
+    
+- Uses the custom IAM role and an AppSpec file.
 
-- Attach IAM role and EC2 instance tag
-
-### CodePipeline
-
-- Source Stage: GitHub repo as source
-
-- Build Stage: CodeBuild using buildspec.yaml
-
-- Deploy Stage: CodeDeploy using created app and deployment group
+#### CodePipeline Service:
+    
+- Orchestrates the entire flow: Source → Build → Deploy (we're skipping test stage).
+    
+- Connects S3, CodeBuild, and CodeDeploy stages.
 
 #### 🚤 Deploy and Run
 
@@ -312,7 +322,7 @@ mlruns/
 
 - Access app in browser:
 
-- http://<EC2-Public-IP>:5000
+- http://<'EC2-Public-IP'>:5000
 
 #### 📊 Tools & Tech Stack
 
