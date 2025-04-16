@@ -1,51 +1,61 @@
--------------------------Setting up project structure---------------------------
+-----------------------------------Setting up project structure--------------------------------------
 
 1. Create repo, clone it in local
-2. Create a virtual environment named 'atlas' - conda create -n atlas python=3.10
-3. Activate the virtual environment - conda activate atlas
+2. Create a virtual environment named 'ipl_project' - conda create -n ipl_project python=3.10
+3. Activate the virtual environment - conda activate ipl_project
 4. pip install cookiecutter
 5. cookiecutter -c v1 https://github.com/drivendata/cookiecutter-data-science
 6. Rename src.models -> src.model
 7. git add - commit - push
 
 
--------------------------Setup MLFlow on Dagshub---------------------------
+------------------------------------Setup MLFlow on Dagshub------------------------------------------
+
 8. Go to: https://dagshub.com/dashboard
 9. Create > New Repo > Connect a repo > (Github) Connect > Select your repo > Connect
 10. Copy experiment tracking url and code snippet. (Also try: Go To MLFlow UI)
 11. pip install dagshub & mlflow
 
-12. Run exp notebooks(a. Exploratory Data Analysis  / EDA.ipynb
+12. copy and paste requirements.txt from my project
+13. pip install -r requirements.txt
+
+14. Run exp notebooks(a. Exploratory Data Analysis  / EDA.ipynb
                       b. Base-Regressor-model      / base_model.ipynb
                       c. Best-Performing-Algorithm/ model_selection.ipynb
-                      d. Best-Model's-tuning     / model_tuning.ipynb) & visualize performance on mlflow-ui(sort by: user)
-13. git add - commit - push
+                      d. Best-Model's-tuning     / model_tuning.ipynb & visualize performance on mlflow-ui(sort by: user))
+15. git add - commit - push
 
-14. on terminal - "dvc init"
-15. create a local folder as "local_s3" (temporary work/testing)
-16. on terminal - "dvc remote add -d mylocal local_s3"
+16. on terminal - "dvc init"
+17. create a local folder as "local_s3" (temporary work/testing)
+18. on terminal - "dvc remote add -d mylocal local_s3"
 
-18. add file - dvc.yaml (till model evaluation.metrics)
-19. add file - params.yaml
-20. DVC pipeline is ready to run - dvc repro (on terminal:[ git rm -r --cached 'data/' ])
-21. Once do - dvc status
-22. git add - commit - push
+19. Add code to below files/folders inside src dir:
+    - logger
+    - data_ingestion.py
+    - data_preprocessing.py
+    - feature_engineering.py
+    - model_building.py
+    - model_evaluation.py
+    - register_model.py
 
-23. Need to add S3 as remote storage - Create IAM User(keep cred) and S3 bucket
-24. pip install - dvc[s3] & awscli
-25. Checking/deleting dvc remote (optional) - [dvc remote list & dvc remote remove <name>] 
-26. Set aws cred - aws configure
-27. Add s3 as dvc remote storage - dvc remote add -d myremote s3://<bucket-name>
+20. add file - dvc.yaml (till model evaluation.metrics)
+21. add file - params.yaml
+22. DVC pipeline is ready to run - dvc repro (on terminal:[ git rm -r --cached 'data/' ])
+23. Once do - dvc status
+24. git add - commit - push
 
-28. Create new dir - flaskapp | Inside that, add rest of the files and dir:
+25. Need to add S3 as remote storage - Create IAM User(keep cred) and S3 bucket
+26. pip install - dvc[s3] & awscli
+27. Checking/deleting dvc remote (optional) - [dvc remote list & dvc remote remove <name>] 
+28. Set aws cred - aws configure
+29. Add s3 as dvc remote storage - dvc remote add -d myremote s3://<bucket-name>
+
+30. Create new dir - flaskapp | Inside that, add rest of the files and dir:
     files  : [app.py, prod_requirements.txt]
     folders: [static, templates]    
 
-    -----------------------------for PRODUCTION purposes-------------------------------------
-    note1 - params.yaml added coz we using it in our app in modular way and not hard-coding.
-    note2 - logger file added here coz we used our custom logging in our app also.
 
-29. Run the app and test it in your local system:
+31. Run the app and test it in your local system:
     - test if we're getting any error before the site is loaded
     - if the logic built in our app is working or failing (eg: same team bats and bowls)
     - use some test data from interim to see how the predictions are doing.
@@ -54,11 +64,9 @@
 Kolkata Knight Riders |  Mumbai Indians  |   55  |    1     |  7.3  |       42     |       1          |  187
 
 
-30. pip freeze > requirements.txt
 
 
-
-=========================================================================================================================
+================================================ ALL ABOUT CI/CD ===================================================================
 
 Now that our pipeline runs successfully and our app runs on localhost just fine,
 
@@ -72,190 +80,211 @@ b. Builds it with CodeBuild
 c. Deploys it to an EC2 instance with CodeDeploy
 d. Uses CodePipeline to glue everything together
 
-- services we'll be using: CI/CD Flow using AWS CodePipeline (6 Services)
+- services we'll be using: CI/CD Flow using AWS CodePipeline (6 Services):
     1. IAM
-    Create custom service roles for EC2 and CodeDeploy
-    Manage permissions for each service.
+    - Create custom service roles for EC2 and CodeDeploy
+    - Manage permissions for each service.
 
     2. EC2
-    Set up as the deployment target.
-    Attach the appropriate IAM role.
-    Writing and running a shell script manually using Vim and Bash.
+    - Set up as the deployment target.
+    - Attach the appropriate IAM role.
+    - Writing and running a shell script manually using Vim and Bash.
 
     3. S3
-    Used by CodePipeline internally to store artifacts.
-    Auto-created and managed; remember to delete it after use.
+    - Used by CodePipeline internally to store artifacts.
+    - Auto-created and managed; remember to delete it after use.
 
     4. CodeBuild
-    Handles the build phase.
-    Uses a buildspec to compile/test the app.
+    - Handles the build phase.
+    - Uses a buildspec to compile/test the app.
 
     5. CodeDeploy
-    Manages deployment to EC2.
-    Uses the custom IAM role and an AppSpec file.
+    - Manages deployment to EC2.
+    - Uses the custom IAM role and an AppSpec file.
 
     6. CodePipeline
-    Orchestrates the entire flow: Source → Build → Deploy (we're skipping test stage).
-    Connects S3, CodeBuild, and CodeDeploy stages.
+    - Orchestrates the entire flow: Source → Build → Deploy (we're skipping test stage).
+    - Connects S3, CodeBuild, and CodeDeploy stages.
 
 
 - Before moving to aws console we need to do some steps must be completed in order to smoothly deploy 
   our app on live server i.e. into production such as:
 
-1.copy logger from src, paste it into our flaskapp dir
-2.copy params.yaml, paste it into flaskapp dir
+1.Add code to below files/folders:
+  - scripts/
+  - buildspec.yaml
+  - appspec.yaml
 
-    -----------------------------for PRODUCTION purposes-------------------------------------
-    note1 - params.yaml added coz we using it in our app in modular way and not hard-coding.
-    note2 - logger file added here coz we used our custom logging in our app also.
+2.Copy logger from src, paste it into our flaskapp dir
+3.Copy params.yaml, paste it into flaskapp dir
+
+--------------------------------------------- For Production Purposes ------------------------------------------------
+
+note1 - A scripts/ folder has been added to the project along with buildspec.yaml and appspec.yaml. 
+            These files are used for deployment automation (i.e. in AWS CodePipeline/CodeDeploy workflows).
+
+note2 - params.yaml added coz we using it in our app in modular way and not hard-coding.
+
+note3 - logger file added here coz we used our custom logging in our app also.
             we'll use code ['from logger import logging'] in our app.py
+
+------------------------------------------- Continuation to CI-CD workflow -----------------------------------------
 
 3.git add > commit > push to main repository.
 
 4.Enter AWS console login 
+
 5.Create IAM user & set up IAM Configuration (create 2 custom service roles)
 
 5.(a).Create CodeDeploy Service Role
-  Go to IAM > Roles > Create role
-  Trusted entity: AWS service
-  Use case: CodeDeploy
-  Click Next until permissions screen
-  Attach the following 6 policies:
+ - Go to IAM > Roles > Create role
+ - Trusted entity: AWS service
+ - Use case: CodeDeploy
+ - Click Next until permissions screen
+ - Attach the following 6 policies:
       AmazonEC2FullAccess
       AmazonS3FullAccess
       AWSCodeDeployFullAccess
       AWSCodeDeployRole
       AmazonEC2RoleforAWSCodeDeploy
       AmazonEC2RoleforAWSCodeDeployLimited
-      Name the role appropriately
-  Click Create role
+ - Name the role appropriately
+ - Click Create role
 
 5.(b).Create EC2-CodeDeploy Service Role
-  Same steps as above, but choose EC2 as use case
-  Attach these 3 policies:
+ - Same steps as above, but choose EC2 as use case
+ - Attach these 3 policies:
       AmazonEC2FullAccess
       AmazonS3FullAccess
       AWSCodeDeployFullAccess
-  Name and create the role
+ - Name and create the role
+
 
 6.Launch EC2 Instance
-  Name the instance
-  AMI: Ubuntu 22.04
-  Create or use existing .pem key pair
-  Create a security group:
+ - Name the instance
+ - AMI: Ubuntu 22.04
+ - Create or use existing .pem key pair
+ - Create a security group:
           Allow HTTP (80)
           Allow HTTPS (443)
-  Launch instance
+ - Launch instance
 
-  6.(a).Configure Security Group for Custom Port (e.g., 5000):
-    Go to Running Instances > Security > Security Groups > Edit Inbound Rules
-    Add rule:
-    Port range: 5000
-    Source: 0.0.0.0/0
+  6.(a).Configure Security Group for Custom Port (e.g.5000 (that we've used in our app.py)):
+   - Go to Running Instances > Security > Security Groups > Edit Inbound Rules
+   - Add rule:
+   - Port range: 5000
+   - Source: 0.0.0.0/0
 
   6.(b).Attach IAM Role to EC2:
-    select running instance > Go to Actions > Security > Modify IAM role
-    Attach the EC2 service role created earlier
+   - Select running instance > Go to Actions > Security > Modify IAM role
+   - Attach the EC2 service role created earlier
 
 
 7.EC2 Initial Setup
-  Connect to the instance via browser-based SSH
-  Run: vim install.sh
+  - Connect to the instance via browser-based SSH
+  - Run: vim install.sh
 
   In install.sh:
-  Press <i> to insert
-  Paste content from ec2_script.txt   (don't use ctrl+v for pasting here do it manually)
+  - Press <i> to insert
+  - Paste content from ec2_script.txt   (use right click + Paste for pasting)
 
   Save & Exit:
-  press <ESC>, then press <:> write <wq>, then ENTER
-
-  Then Run: bash install.sh
+  - Press <ESC>, then Press <:> write <wq>, then ENTER
+  - Then Run: bash install.sh
   
-  a couple of ui based "Daemon using outdated libraries" might pop up just press 'Enter' 
-  and let the packages install and building of code-deploy-agent at the end we see the status of our built
-  code-deploy-agent : active(running) in green color then we move to another tab to create another service.
-
+  note: a couple of ui based "Daemon using outdated libraries" might pop up after running bash install.sh 
+  just keep pressing 'Enter' and let the packages install and building of code-deploy-agent, at the end we 
+  can see the status of our built code-deploy-agent : active(running) in green color 
+  and then we move to another tab to create another service.
 
 
 8.CodeDeploy Service 
   8.(a).create CodeDeploy Application
-    Go to CodeDeploy > Getting Started > Create Application
-    Name it
-    Compute platform: EC2
+   - Go to CodeDeploy > Getting Started > Create Application
+   - Name it
+   - Compute platform: EC2
 
   8.(b).Create Deployment Group:
-    Name it
-    Attach CodeDeploy service role
-    Deployment type: In-place
-    Environment config:
+   - Name it
+   - Attach CodeDeploy service role
+   - Deployment type: In-place
+   - Environment config:
       EC2 tag key: name,   Value: <running-ec2-instance>
-    Install agent: Choose Never (to avoid version mismatch)
-    Disable load balancing
-    Click Create Deployment Group
-    on creation of deployment group now we move to CodePipeline to automate the entire workflow
+   - Install agent: Choose Never (to avoid version mismatch)
+   - Disable load balancing
+   - Click Create Deployment Group
+
+  On creation of deployment group now we move to CodePipeline to automate the entire workflow
 
 9.Setup CodePipeline
   9.(a).Creation stage
-  Getting started > create pipeline > creation option: build custom pipeline > Next
+   - Getting started > create pipeline > creation option: build custom pipeline > Next
 
   9.(b).Pipeline Settings Stage
-    Pipeline name
-    Execution mode: Superseded
-    Service role: New (default)
-    Click Next
+   - Pipeline name
+   - Execution mode: Superseded
+   - Service role: New (default)
+   - Click Next
 
   9.(c).Source Stage
-    Provider: GitHub (via app)
-    Create connection / use existing
-    Choose repository and main branch
-    Output artifact format: CodePipeline default
+   - Provider: GitHub (via app)
+   - Create connection / use existing
+   - Choose repository and main branch
+   - Output artifact format: CodePipeline default
 
   9.(d).Build Stage
-    Provider: AWS CodeBuild
-    Create project:
-    Name the project
-    Project type: Default
-    Environment: All default EXCEPT:
-    Running mode: Instance (not container)
-    Buildspec: select option to USE buildspec.yaml from source
-    Untick CloudWatch logs
-    Click Continue to CodePipeline
+   - Provider: AWS CodeBuild
+   - Create project:
+      - Name the project
+      - Project type: Default
+      - Environment: All default EXCEPT:
+      - Running mode: Instance (not container)
+      - Buildspec: select option to USE buildspec.yaml from source
+      - Untick CloudWatch logs
+   - Click Continue to CodePipeline
 
   9.(e).Test Stage
-    Can be skipped
+   - Can be skipped
 
   9.(f).Deploy Stage
-    Deploy provider: AWS CodeDeploy
-    Choose the application name and deployment group from earlier
-    Review and create pipeline
+   - Deploy provider: AWS CodeDeploy
+   - Choose the application name and deployment group from earlier
+   - Review and create pipeline
 
 10.Pipeline Execution
-  Once all stages execute i.e. Sourece --> Build --> Deploy then,
-  Go to EC2 terminal, check list of directories:
-  run: ls
+  Once all stages execute i.e. Source --> Build --> Deploy, then 
+   - Go to EC2 terminal, check list of directories:
+   - run: ls
   You should see the directory "flaskapp" in the list
 
 11.Run Your App
-  run: cd /home/ubuntu/flaskapp    
-  run: ls                   
+  - run: cd /home/ubuntu/flaskapp    
+  - run: ls                   
 
   Check existence of necessary files and folders to run app:
-  app.py, prod_requirements.txt, templates, static, logger, params.yaml
+        app.py, prod_requirements.txt, templates, static, logger, params.yaml
 
-  run: pip3 install -r prod_requirements.txt
-  run: python3 app.py
+  - run: pip3 install -r prod_requirements.txt
+  - run: python3 app.py
 
 12.Authorize with DAGsHub (If prompted)
-  Copy the DAGsHub OAuth link (don't use ctrl+c instead right click and copy)
-  Open in browser
-  Authorize access for 1 day/ week/ month 
+  - Copy the DAGsHub OAuth link (don't use ctrl+c instead right click and copy)
+  - Open in browser
+  - Authorize access for 1 day/ week/ month 
 
 13.Access the Running App
-  From EC2 console:
-  Copy the public IP
-  Replace the Private IP such as 127.0.0.1 in http://127.0.0.1:5000 in terminal link with EC2 Public IP
+  - From EC2 console:
+  - Copy the Public IP
+  - Replace the Private IP such as <127.0.0.1> in [http://127.0.0.1:5000] in terminal link with EC2 Public IP
 
-Visit in browser:    http://<EC2-public-IP>:5000
+14.Visit in browser: http://<EC2-public-IP>:5000    
 
-when done, delete all services:
-IAM user, CodeBuild, CodeDeploy, CodePipeline, S3, EC2
+15.Test predictions using test data 
+
+16.When done, delete all services:
+  - IAM user
+  - CodeBuild
+  - CodeDeploy
+  - CodePipeline
+  - S3
+  - EC2

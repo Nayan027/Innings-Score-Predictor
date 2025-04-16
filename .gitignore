@@ -176,3 +176,4 @@ cython_debug/
 credentials.txt
 data/
 local_s3/
+logs/
