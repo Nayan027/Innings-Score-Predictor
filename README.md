@@ -1,10 +1,89 @@
-# 🏏 Innings-Score-Predictor - An End-to-End MLOps Project
+# 🏏 Innings-Score-Predictor : An End-to-End MLOps Project
 This is an End to end Project implementing Machine Learning Operations to develop a production grade project which is used to predict the score of an innings based on certain features and user input values.
 
 Using tools like DVC, MLflow, DagsHub, Flask, and AWS CodeBuild, CodeDeploy, CodePipeline, etc. It demonstrates a production-ready ML pipeline with experiment tracking, model versioning, and cloud integration.
 
 ---
-## 🆕 Whats's New? : "CodePipeline Over Docker".
+
+## 📌 Project Overview
+This project aims to predict the final 1st innings score of an IPL team just after the first 4 overs of play. By analyzing historical match data and leveraging early match dynamics, the model can provide fast, data-driven score forecasts—helpful for broadcasters, fantasy league players, and analysts.
+
+Rather than relying purely on run rate assumptions, this model uses basic but meaningful features like wickets in hand, runs in recent overs, and batting/bowling team identities to make score predictions.
+
+### 📁 Notebook Workflow
+- EDA.ipynb: Data exploration & understanding
+
+- base_model.ipynb: Baseline regression model and mlflow connection checkup
+
+- model_selection.ipynb: Algorithm comparison
+
+- model_tuning.ipynb: Hyperparameter tuning
+
+### 🔍 Key Features Considered
+- Wickets and runs scored upto a certain over (eg: 110 runs at 12.4 overs losing 3 wickets)
+
+- Momentum in the first 4 overs
+
+- Batting vs. Bowling team
+
+- Wickets lost and Runs scored in last 5 overs from now 
+
+This approach ensures more reliable predictions early in the game.
+
+### 📊 Data Collection & Features
+Historical IPL match data was collected from Kaggle, with the following key features used:
+
+- bat_team, bowl_team – Teams involved
+
+- runs, wickets, overs – Current match state
+
+- runs_last_5, wickets_last_5 – Recent momentum
+
+- total – Final score (target variable)
+
+Columns like mid, venue, batsman, bowler, striker, and non-striker were dropped for simplification in this version.
+
+### 🧹 Preprocessing Strategy
+- Dropped non-essential columns for this simplified version
+
+- Used the date column to split data into train (2008–2015) and test (2016–2017) sets
+
+- This temporal split ensures realistic, future-facing evaluation—more appropriate than random splits, as it mimics time-series forecasting
+
+### 🛠️ Feature Engineering
+- Encoded categorical variables (e.g., batting teams)
+
+- Scaled numerical features for consistency
+
+- Focused on only relevant and actionable data inputs
+
+### 🎯 Project Goal
+This is a foundational version of a larger vision: turning a basic regression-based ML use case into a production-grade MLOps pipeline.
+
+While high accuracy isn’t the main priority at this stage, the focus is on:
+
+- Clean workflow
+
+- Realistic data handling
+
+- Automation-ready structure
+
+- Scalability for future additions (e.g., pitch reports, toss, weather)
+
+---
+
+## 🖥️ Demonstration of FlaskApp on Live Server 
+https://github.com/user-attachments/assets/8d5775c5-c102-4c9d-a9e8-1b11d3437787
+
+- Tested prediction of an Inning's End Score
+- Validated if our logic holds or failed such as:
+    - same bat-team and bowl-team
+    - overs below 4.1 and above 20
+    - wickets fell more than 10
+---
+---
+
+## 🆕 Whats's New? : "CodePipeline Over Docker"
 
 ### ❌ Why Not Use Docker?
 While Docker is a powerful tool for containerizing applications, it can sometimes introduce unnecessary complexity—especially for straightforward deployment pipelines or for beginners just getting into MLOps. Writing Dockerfiles, building images, and managing containers can slow down development and add infrastructure overhead that isn't always needed for smaller or more focused projects.
@@ -18,6 +97,7 @@ This approach shows that you don’t need Docker to build effective, real-world 
 ### 🧠 Conclusion: A Simplified MLOps Approach
 By choosing CodePipeline over Docker, this project introduces a fresh, simplified approach to MLOps deployment. It's ideal for solo developers, students, or teams looking for a scalable yet accessible solution. This project is a clear example of how modern cloud-native workflows can replace traditional container-based methods without compromising functionality or reliability.
 
+---
 ---
 
 ## 🛠️ Project Setup & Execution
@@ -189,7 +269,6 @@ python app.py
 ```Terminal
 $env:CAPSTONE_TEST="your_token_here"
 ```
-
 ---
 
 <!-- ## ✅ Environment Variable Setup
@@ -225,12 +304,12 @@ mlruns/
 - [x] Secure environment variables and token set
 
 ---
-
+---
 
 
 ## ⚙️ CI/CD with AWS
 
-#### AWS Services Used:
+### AWS Services Used:
 
 - IAM : Create custom service roles for EC2 and CodeDeploy
 
@@ -243,7 +322,7 @@ mlruns/
 - CodeDeploy : Deploys to EC2 instance
 
 - CodePipeline : Orchestrates CI/CD process
-
+---
 ### Plan:
 
 - Create a pipeline that:
@@ -257,8 +336,8 @@ mlruns/
 - Deploys to EC2 with CodeDeploy
 
 - Glues entire flow using CodePipeline
-
-#### Before AWS Console Work
+---
+### Before AWS Console Work, steps to execute: 
 
 - Add 'prod_requirements.txt' into 'flaskapp/'
 
@@ -267,14 +346,14 @@ mlruns/
 - Add 'scripts/', 'buildspec.yaml', 'appspec.yaml' into root directory
 
 - Git add, commit, and push
-
-#### IAM Configurations:
+---
+### IAM Configurations:
 
 - Create custom service roles for EC2 and CodeDeploy
 
 - Manage permissions for each service.
 
-#### EC2 Setup:
+### EC2 Setup:
 
 - Set up as the deployment target.
     
@@ -282,31 +361,39 @@ mlruns/
     
 - Writing and running a shell script manually using Vim and Bash.
 
-#### S3 Bucket:
+### S3 Bucket:
 
 - Used by CodePipeline internally to store artifacts.
 
 - Auto-created and managed; remember to delete it after use.
 
-#### CodeBuild Service:
+### CodeBuild Service:
     
 - Handles the build phase.
     
 - Uses a buildspec to compile/test the app.
 
-#### CodeDeploy Service:
+### CodeDeploy Service:
     
 - Manages deployment to EC2.
     
 - Uses the custom IAM role and an AppSpec file.
 
-#### CodePipeline Service:
+### CodePipeline Service:
     
 - Orchestrates the entire flow: Source → Build → Deploy (we're skipping test stage).
     
 - Connects S3, CodeBuild, and CodeDeploy stages.
+---
 
-#### 🚤 Deploy and Run
+## 🖥️ Demonstration of Successful Pipeline Execution on CodePipeline Creation
+https://github.com/user-attachments/assets/c7038f6a-9025-4e3d-b53f-f9fcef203a95
+- Source: Github(via App)
+- Build: CodeBuild
+- Deploy: CodeDeploy
+---
+
+### 🚤 Deploy and Run
 
 - SSH into EC2
 
@@ -321,7 +408,7 @@ pip3 install -r prod_requirements.txt
 python3 app.py
 ```
 
-#### Authorize with DagsHub if prompted
+### Authorize with DagsHub if prompted
 
 - Access app in browser:
 
@@ -329,8 +416,8 @@ python3 app.py
 # Replace Private-IP with Public-IP in given link
 http://<'EC2-Public-IP'>:5000
 ```
-
-#### 📊 Tools & Tech Stack
+---
+## 📊 Tools & Tech Stack:
 
 - Python, Pandas, Scikit-learn
 
