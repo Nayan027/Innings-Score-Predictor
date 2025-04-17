@@ -5,7 +5,8 @@
 3. Activate the virtual environment - conda activate ipl_project
 4. pip install cookiecutter
 5. cookiecutter -c v1 https://github.com/drivendata/cookiecutter-data-science
-6. Rename src.models -> src.model
+6.a. Rename src.models -> src.model
+6.b. Rename data/ -> data_folder/  (which stores raw/interim/etc.)
 7. git add - commit - push
 
 

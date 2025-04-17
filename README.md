@@ -205,7 +205,7 @@ $env:BUCKET_NAME="your_bucket_name" -->
 ## 📌 .gitignore Recommendations
 
 ```gitignore
-data/
+data_folder/
 local_s3/
 __pycache__/
 *.log

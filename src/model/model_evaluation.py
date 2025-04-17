@@ -138,7 +138,7 @@ def main():
     with mlflow.start_run() as run:  # Start an MLflow run
         try:
             regressor = load_model('./models/model.pkl')
-            test_data = load_data('./data/processed/test_transformed.csv')
+            test_data = load_data('./data_folder/processed/test_transformed.csv')
             
             X_test = test_data.iloc[:, :-1].values
             y_test = test_data.iloc[:, -1].values

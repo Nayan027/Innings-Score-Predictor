@@ -160,14 +160,14 @@ def main():
         # columns_to_encode = ['bat_team','bowl_team']                                 # hard-coded for testing
         # columns_to_scale = ['overs', 'runs', 'wickets', 'runs_last_5', 'wickets_last_5']
 
-        train_data = load_data('./data/interim/train_preprocessed.csv')
-        test_data = load_data('./data/interim/test_preprocessed.csv')
+        train_data = load_data('./data_folder/interim/train_preprocessed.csv')
+        test_data = load_data('./data_folder/interim/test_preprocessed.csv')
 
         
         train_df, test_df, _, _  = apply_feat_engg(train_data, test_data, columns_to_encode, columns_to_scale)
 
-        save_data(train_df, os.path.join("./data", "processed", "train_transformed.csv"))
-        save_data(test_df, os.path.join("./data", "processed", "test_transformed.csv"))
+        save_data(train_df, os.path.join("./data_folder", "processed", "train_transformed.csv"))
+        save_data(test_df, os.path.join("./data_folder", "processed", "test_transformed.csv"))
 
         logging.info("Feature engineering process completed successfully.")
     except Exception as e:
