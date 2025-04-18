@@ -202,7 +202,14 @@ git add .
 git commit -m "DVC pipeline added"
 git push
 ```
+---
 
+## Pipeline flow: Part 1
+![Image](https://github.com/user-attachments/assets/911b8d11-b242-4ba0-a5f3-41c2a4e1a63d)
+
+## Pipeline flow: Part 2
+![part2-pipeline](https://github.com/user-attachments/assets/9cafaf4b-8c17-4d68-9b72-d724b15a1779)
+---
 ---
 
 ## ☁️ AWS S3 Integration for DVC
